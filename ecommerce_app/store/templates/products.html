@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    {% load static %}
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>grocery store</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
+
+    <!-- font awesome cdn link -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <!-- css file link -->
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+
+<body>
+    <header class="header">
+
+        <a href="/app" class="logo"> <i class="fas fa-shopping-basket"></i>grocer</a>
+
+        <nav class="navbar">
+            <a href="/app">home</a>
+            <a href="/app">categories</a>
+            <a href="/app/products/">products</a>
+
+        </nav>
+        <div class="icons">
+            <div class="fas fa-search" id="search-btn"></div>
+            <a href="/app/cart/"><div class="fas fa-shopping-cart" id="cart-btn"></div></a>
+            <div class="fas fa-user" id="login-btn"></div>
+        </div>
+
+        <form action="" class="search-form">
+            <input type="search" name="search" value="{{ request.GET.q }}" id="search-box placeholder=" search here . . .>
+        </form>
+
+            <div class="login-form">
+                {% csrf_token %}
+                <h3>User Name</h3>
+                {% if user %}
+                <p>{{user.username}}</p>
+                <a href="/app/logout/"><input type="submit" value="Logout" class="btn"></a>
+                <a href="/app/orders/"><input type="submit" value="Orders" class="btn"></a>
+                {% else %}
+                <a href="/app/login/"><input type="submit" value="login now" class="btn"></a>
+                {% endif %}
+            </div>
+    </header>
+    
+    <section style="margin-top: 100px;" class="soft drinks" id="soft drinks">
+        <h1 class="heading">{{category}}</h1>
+        <!-- <div class="swiper products-slider"> -->
+
+            <div style="display: flex; flex-direction: row; flex-wrap: wrap; gap: 30px;">
+                {% for prod in products %}
+                    <div class="box" style="margin: 10px;">
+                        <img style="width: 200px; height: 200px;" src="/media/{{prod.img}}" alt="">
+                        <h2>{{prod.name}}</h2>
+                        <div class="price"> RS:{{prod.price}}/- </div>
+                        <div class="stars">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                        </div>
+                        {% if prod.id in cart_product_ids %}
+                            <button class="btn" disabled style="opacity: 0.6; cursor: not-allowed;">in cart</button>
+                        {% else %}
+                            <button class="btn add-to-cart-btn" data-product-id="{{prod.id}}">add to cart</button>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        <!-- </div> -->
+
+    </section>
+    <script src="{% static 'script.js' %}"  ></script>
+    <script>
+        // Add to cart AJAX handler
+        document.querySelectorAll('.add-to-cart-btn').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const productId = this.getAttribute('data-product-id');
+                const button = this;
+                
+                // Get CSRF token
+                const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+                
+                // Show loading state
+                button.disabled = true;
+                button.textContent = 'Adding...';
+                
+                // Send AJAX POST request
+                fetch(`/app/addToCart/${productId}`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': csrfToken,
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Update button state
+                        button.disabled = true;
+                        button.textContent = 'in cart';
+                        button.style.opacity = '0.6';
+                        button.style.cursor = 'not-allowed';
+                        
+                        // Show success message
+                        alert(data.message);
+                    } else if (data.already_in_cart) {
+                        // Product already in cart
+                        button.disabled = true;
+                        button.textContent = 'in cart';
+                        button.style.opacity = '0.6';
+                        button.style.cursor = 'not-allowed';
+                        alert(data.message);
+                    } else if (data.redirect) {
+                        // Need to login
+                        window.location.href = data.redirect;
+                    } else {
+                        alert(data.message);
+                        button.disabled = false;
+                        button.textContent = 'add to cart';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error adding to cart');
+                    button.disabled = false;
+                    button.textContent = 'add to cart';
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

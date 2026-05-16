@@ -1,0 +1,125 @@
+/* Checkout page specific styles */
+.checkout-section {
+    padding: 4rem 9%;
+    background: #f5faff; /* light blue‑gray */
+    margin-top: 100px; /* keep existing spacing */
+}
+
+.checkout-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2.5rem;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.order-summary-box,
+.customer-details-box {
+    background: #fff;
+    padding: 2.5rem;
+    border-radius: .6rem;
+    box-shadow: var(--box-shadow);
+    flex: 1 1 350px;
+}
+
+.checkout-heading {
+    font-size: 3.2rem;
+    color: var(--black);
+    margin-bottom: 1.2rem;
+    text-align: center;
+}
+
+.summary-title {
+    font-size: 2.2rem;
+    color: var(--orange);
+    margin-bottom: 1rem;
+}
+
+.order-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1.5rem;
+}
+
+.order-item {
+    display: flex;
+    justify-content: space-between;
+    padding: .6rem 0;
+    border-bottom: 1px solid #eee;
+    font-size: 1.6rem;
+    color: var(--light-color);
+}
+
+.product-name { flex: 2; }
+.product-qty  { flex: 1; text-align: center; }
+.product-subtotal { flex: 1; text-align: right; }
+
+.total-price {
+    font-size: 2.2rem;
+    color: var(--orange);
+    margin-top: .8rem;
+}
+
+.payment-note {
+    font-style: italic;
+    color: var(--light-color);
+    margin-top: .4rem;
+}
+
+/* Form styling */
+.checkout-form .form-group {
+    margin-bottom: 1.8rem;
+}
+
+.checkout-form label {
+    display: block;
+    margin-bottom: .4rem;
+    font-weight: 500;
+    color: var(--black);
+}
+
+.checkout-form input,
+.checkout-form textarea {
+    width: 100%;
+    padding: .8rem;
+    border: 1px solid #ccc;
+    border-radius: .4rem;
+    font-size: 1.6rem;
+    transition: border .2s;
+}
+
+.checkout-form input:focus,
+.checkout-form textarea:focus {
+    border-color: var(--orange);
+    outline: none;
+}
+
+.readonly-input {
+    background: #f0f0f0;
+    cursor: not-allowed;
+}
+
+.checkout-btn {
+    background: var(--orange);
+    color: #fff;
+    border: none;
+    padding: .9rem 2.5rem;
+    font-size: 1.8rem;
+    border-radius: .5rem;
+    cursor: pointer;
+    transition: background .2s;
+}
+
+.checkout-btn:hover {
+    background: #e66a00;
+}
+
+@media (max-width: 768px) {
+    .checkout-container {
+        flex-direction: column;
+    }
+    .order-summary-box,
+    .customer-details-box {
+        flex: 1 1 100%;
+    }
+}

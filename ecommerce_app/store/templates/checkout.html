@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout</title>
+     <!-- font awesome cdn link -->
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <!-- css file link -->
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+    <link rel="stylesheet" href="{% static 'checkout.css' %}">
+</head>
+<body>
+    <!-- Header (same as other pages) -->
+    <header class="header">
+        <a href="/app" class="logo"><i class="fas fa-shopping-basket"></i>grocer</a>
+        <nav class="navbar">
+            <a href="/app">home</a>
+            <a href="/app">categories</a>
+            <a href="/app/products/">products</a>
+        </nav>
+        <div class="icons">
+            <a href="/app/cart/"><div class="fas fa-shopping-cart" id="cart-btn"></div></a>
+            <div class="fas fa-user" id="login-btn"></div>
+        </div>
+        <div class="login-form">
+            {% csrf_token %}
+            <h3>User Name</h3>
+            {% if user %}
+                <p>{{ user.username }}</p>
+                <a href="/app/logout/"><input type="submit" value="Logout" class="btn"></a>
+            {% else %}
+                <a href="/app/login/"><input type="submit" value="login now" class="btn"></a>
+            {% endif %}
+        </div>
+    </header>
+
+    <section class="checkout-section" style="margin-top: 100px;">
+        <div class="checkout-container">
+            <!-- Order Summary -->
+            <div class="order-summary-box">
+                <h2 class="checkout-heading">Checkout</h2>
+                <h3 class="summary-title">Order Summary</h3>
+                <ul class="order-list">
+                    {% for item in cart_items %}
+                        <li class="order-item">
+                            <span class="product-name">{{ item.product.name }}</span>
+                            <span class="product-qty">Qty: {{ item.qty }}</span>
+                            <span class="product-subtotal">Subtotal: {{ item.amount }}</span>
+                        </li>
+                    {% endfor %}
+                </ul>
+                <p class="total-price"><strong>Total: {{ cart.total }}</strong></p>
+                <p class="payment-note"><em>Payment Method: Cash on Delivery (COD)</em></p>
+            </div>
+            <!-- Customer Details Form -->
+            <div class="customer-details-box">
+                <form method="post" action="{% url 'checkout' %}" class="checkout-form">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="address">Shipping Address</label>
+                        <textarea id="address" name="address" rows="3" required placeholder="Enter your address"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input id="phone" type="text" name="phone" required placeholder="e.g. +1-555-123-4567">
+                    </div>
+                    <div class="form-group">
+                        <label>Payment Method</label>
+                        <input type="text" name="payment_method" value="Cash on Delivery" readonly class="readonly-input" />
+                    </div>
+                    <button type="submit" class="btn checkout-btn">Place Order</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <script src="{% static 'script.js' %}"></script>
+</body>
+</html>
